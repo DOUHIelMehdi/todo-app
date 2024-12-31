@@ -39,7 +39,7 @@ pipeline {
             }
         }
         
-        }
+    }
     }
 
     post {
@@ -47,4 +47,4 @@ pipeline {
             echo 'Pipeline execution completed.'
         }
     }
-}
+
