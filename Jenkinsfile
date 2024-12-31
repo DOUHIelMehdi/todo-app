@@ -21,6 +21,10 @@ pipeline {
             steps {
                 echo 'Building the application...'
                 sh 'npm install'
+
+                sh 'npm run build'
+
+                echo 'constrdction de l\'app terminée'
             }
         }
 
