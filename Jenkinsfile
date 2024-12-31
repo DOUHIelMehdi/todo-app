@@ -1,25 +1,19 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'node:16'
+        }
+    }
 
     environment {
-        DOCKER_IMAGE = 'todo-app-image' // Docker image name
-        DOCKER_TAG = 'latest'          // Docker tag
+        DOCKER_IMAGE = 'todo-app-image'
+        DOCKER_TAG = 'latest'
     }
 
     stages {
         stage('Checkout Code') {
             steps {
                 git branch: 'master', url: 'https://github.com/DOUHIelMehdi/todo-app.git'
-            }
-        }
-
-        stage('Install Node.js') {
-            steps {
-                echo 'Installing Node.js and npm...'
-                sh 'curl -fsSL https://deb.nodesource.com/setup_16.x | bash -'
-                sh 'apt-get install -y node.js'
-                sh 'node -v'
-                sh 'npm -v'
             }
         }
 
