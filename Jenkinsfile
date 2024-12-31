@@ -9,14 +9,15 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/your-repo/todo-app.git' // Replace with your repository URL
+                // Use the repository URL without credentials
+                git branch: 'main', url: 'https://github.com/your-repo/todo-app.git' 
             }
         }
 
         stage('Build') {
             steps {
                 echo 'Building the application...'
-                sh 'npm install'  // Adjust ifthe project usdifferent build system
+                sh 'npm install'  // Adjust if the project uses a different build system
             }
         }
 
