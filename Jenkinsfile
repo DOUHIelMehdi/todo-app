@@ -1,18 +1,10 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:16'
-        }
-    }
-
-    environment {
-        DOCKER_IMAGE = 'todo-app-image'
-        DOCKER_TAG = 'latest'
-    }
+    agent any
 
     stages {
         stage('Checkout Code') {
             steps {
+                echo 'Checking out code from GitHub...'
                 git branch: 'master', url: 'https://github.com/DOUHIelMehdi/todo-app.git'
             }
         }
@@ -20,49 +12,21 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building the application...'
+
+                // Install project dependencies
                 sh 'npm install'
 
+                // Build the project
                 sh 'npm run build'
 
-                echo 'construuction de l\'app terminée'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                echo 'Running tests...'
-                sh 'npm test'
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                echo 'Building Docker image...'
-                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
-            }
-        }
-
-        stage('Push Docker Image') {
-            steps {
-                echo 'Pushing Docker image to Docker Hub...'
-                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
-                    sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
-                }
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                echo 'Deploying application...'
-                sh './deploy.sh'
+                echo 'Build completed successfully!'
             }
         }
     }
 
     post {
         always {
-            echo 'Pipeline complete.'
+            echo 'Pipeline execution completed.'
         }
     }
 }
