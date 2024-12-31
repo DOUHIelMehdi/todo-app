@@ -17,7 +17,7 @@ pipeline {
             steps {
                 echo 'Installing Node.js and npm...'
                 sh 'curl -fsSL https://deb.nodesource.com/setup_16.x | bash -'
-                sh 'apt-get install -y nodejs'
+                sh 'apt-get install -y node.js'
                 sh 'node -v'
                 sh 'npm -v'
             }
