@@ -40,7 +40,7 @@ pipeline {
         }
         
     }
-    }
+    
 
     post {
         always {
@@ -48,3 +48,4 @@ pipeline {
         }
     }
 
+}
