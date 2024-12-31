@@ -10,7 +10,7 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 // Use the repository URL without credentials since it's public
-                git branch: 'main', url: 'https://github.com/your-repo/todo-app.git'
+                git branch: 'main', url: 'https://github.com/DOUHIelMehdi/todo-app.git'
             }
         }
 
