@@ -9,22 +9,31 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                // Use the repository URL without credentials since it's public
                 git branch: 'master', url: 'https://github.com/DOUHIelMehdi/todo-app.git'
+            }
+        }
+
+        stage('Install Node.js') {
+            steps {
+                echo 'Installing Node.js and npm...'
+                sh 'curl -fsSL https://deb.nodesource.com/setup_16.x | bash -'
+                sh 'apt-get install -y nodejs'
+                sh 'node -v'
+                sh 'npm -v'
             }
         }
 
         stage('Build') {
             steps {
                 echo 'Building the application...'
-                sh 'npm install'  // Adjust if the project uses a different build system
+                sh 'npm install'
             }
         }
 
         stage('Test') {
             steps {
                 echo 'Running tests...'
-                sh 'npm test'  // Adjust if your project uses another testing system
+                sh 'npm test'
             }
         }
 
@@ -48,7 +57,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying application...'
-                sh './deploy.sh'  // Replace with your deployment script
+                sh './deploy.sh'
             }
         }
     }
