@@ -16,7 +16,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building the application...'
-                sh 'npm install'  // Adjust if the project uses a different build system
+                sh 'npm install'  // Adjust ifthe project uses a different build system
             }
         }
 
