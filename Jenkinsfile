@@ -1,29 +1,60 @@
 pipeline {
     agent any
+
+    environment {
+        DOCKER_IMAGE = 'todo-app-image' // Docker image name
+        DOCKER_TAG = 'latest'          // Docker tag
+    }
+
     stages {
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
-                checkout scm
+                git branch: 'main', url: 'https://github.com/your-repo/todo-app.git' // Replace with your repository URL
             }
         }
+
         stage('Build') {
             steps {
-                sh 'npm install'
+                echo 'Building the application...'
+                sh 'npm install'  // Adjust if the project uses a different build system
             }
         }
+
         stage('Test') {
             steps {
-                sh 'npm test'
+                echo 'Running tests...'
+                sh 'npm test'  // Adjust if your project uses another testing system
             }
         }
-        stage('Dockerize') {
+
+        stage('Build Docker Image') {
             steps {
-                script {
-                    sh 'docker build -t todo-app .'
-                    sh 'docker tag your-app-name your-dockerhub-username/your-app-name:latest'
-                    sh 'docker push your-dockerhub-username/your-app-name:latest'
+                echo 'Building Docker image...'
+                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                echo 'Pushing Docker image to Docker Hub...'
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
+                    sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
                 }
             }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying application...'
+                sh './deploy.sh'  // Replace with your deployment script
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline complete.'
         }
     }
 }
