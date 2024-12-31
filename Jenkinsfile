@@ -24,7 +24,7 @@ pipeline {
 
                 sh 'npm run build'
 
-                echo 'constrdction de l\'app terminée'
+                echo 'construuction de l\'app terminée'
             }
         }
 
