@@ -28,18 +28,18 @@ pipeline {
             }
         }
 
-         stage('Build-Docker-Image') {
+        stage('Build-Docker-Image') {
             steps {
                 echo 'Building Docker Image for React Frontend...'
 
                 // Build Docker image for the React frontend
-                // sh 'docker build -t $IMAGE_TAG:$BUILD_NUMBER .'
+                sh 'docker build -t $IMAGE_TAG:$BUILD_NUMBER .'
 
                 echo 'Docker Image Built Successfully.'
             }
         }
 
-                stage('Scan-Docker-Image') {
+        stage('Scan-Docker-Image') {
             steps {
                 script {
                     // Install Docker Scout (if not already installed)
