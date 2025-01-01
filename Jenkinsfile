@@ -1,7 +1,7 @@
 pipeline {
     agent any
 
-        environment {
+    environment {
         DOCKER_HUB = credentials('dockerhub') 
         IMAGE_TAG  = 'douhielmehdi/todo-app'      
     }
