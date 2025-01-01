@@ -39,7 +39,23 @@ pipeline {
             }
         }
 
-       stage('Scan-Docker-Image') {
+        stage('Push-Docker-Image') {
+            steps {
+                echo 'Pushing Docker Image to DockerHub...'
+
+                // Login to DockerHub
+                sh '''
+                echo $DOCKER_HUB_PSW | docker login -u $DOCKER_HUB_USR --password-stdin
+                '''
+
+                // Push Docker image to DockerHub
+                sh 'docker push $IMAGE_TAG:$BUILD_NUMBER'
+
+                echo 'Docker Image Pushed Successfully.'
+            }
+        }
+
+        stage('Scan-Docker-Image') {
             steps {
                 script {
                     // Ensure Docker Scout is installed
@@ -50,53 +66,20 @@ pipeline {
                     fi
                     '''
 
-                    // Login to Docker Hub
-                    sh '''
-                    echo $DOCKER_HUB_PSW | docker login -u $DOCKER_HUB_USR --password-stdin
-                    '''
-
-                    // Verify Docker image exists
-                    sh '''
-                    if ! docker pull $IMAGE_TAG:$BUILD_NUMBER; then
-                        echo "Docker image $IMAGE_TAG:$BUILD_NUMBER does not exist. Exiting scan."
-                        exit 1
-                    fi
-                    '''
-
                     // Run Docker Scout scan
-                    try {
-                        echo 'Scanning Docker image for vulnerabilities...'
-                        sh '''
-                        docker-scout cves $IMAGE_TAG:$BUILD_NUMBER
-                        '''
-                        echo 'Scanning complete.'
-                    } catch (Exception e) {
-                        echo "Scan failed: ${e.message}"
-                        currentBuild.result = 'UNSTABLE'
-                    }
+                    echo 'Scanning Docker image for vulnerabilities...'
+                    sh '''
+                    docker-scout cves $IMAGE_TAG:$BUILD_NUMBER
+                    '''
+                    echo 'Scanning complete.'
                 }
             }
         }
-
-
-        stage('Push-Docker-Image') {
-            steps {
-                echo 'Pushing Docker Image to DockerHub...'
-
-                // Push Docker image to DockerHub
-                sh 'docker push $IMAGE_TAG:$BUILD_NUMBER'
-
-                echo 'Docker Image Pushed Successfully.'
-            }
-        }
-        
     }
-    
 
     post {
         always {
             echo 'Pipeline execution completed.'
         }
     }
-
 }
