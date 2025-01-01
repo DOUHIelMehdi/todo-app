@@ -43,11 +43,6 @@ pipeline {
             steps {
                 echo 'Pushing Docker Image to DockerHub...'
 
-                // Login to DockerHub
-                sh '''
-                echo $DOCKER_HUB_PSW | docker login -u $DOCKER_HUB_USR --password-stdin
-                '''
-
                 // Push Docker image to DockerHub
                 sh 'docker push $IMAGE_TAG:$BUILD_NUMBER'
 
@@ -58,15 +53,20 @@ pipeline {
         stage('Scan-Docker-Image') {
             steps {
                 script {
-                    // Ensure Docker Scout is installed
+                    // Install Docker Scout (if not already installed)
                     sh '''
-                    if ! [ -f /usr/local/bin/docker-scout ]; then
+                    if ! command -v docker-scout &> /dev/null; then
                         echo "Installing Docker Scout..."
                         curl -sSfL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh | sh -s -- -b /usr/local/bin
                     fi
                     '''
 
-                    // Run Docker Scout scan
+                    // Login to DockerHub
+                    sh '''
+                    echo $DOCKER_HUB_PSW | docker login -u $DOCKER_HUB_USR --password-stdin
+                    '''
+
+                    // Scan Docker image for vulnerabilities
                     echo 'Scanning Docker image for vulnerabilities...'
                     sh '''
                     docker-scout cves $IMAGE_TAG:$BUILD_NUMBER
@@ -75,11 +75,16 @@ pipeline {
                 }
             }
         }
+
+
+        
     }
+    
 
     post {
         always {
             echo 'Pipeline execution completed.'
         }
     }
+
 }
