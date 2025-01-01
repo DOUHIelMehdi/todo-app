@@ -33,7 +33,7 @@ pipeline {
                 echo 'Building Docker Image for React Frontend...'
 
                 // Build Docker image for the React frontend
-                sh 'docker build -t $IMAGE_TAG:$BUILD_NUMBER .'
+                // sh 'docker build -t $IMAGE_TAG:$BUILD_NUMBER .'
 
                 echo 'Docker Image Built Successfully.'
             }
