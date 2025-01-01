@@ -7,12 +7,12 @@ pipeline {
     }
 
     stages {
-        stage('Checkout Code') {
-            steps {
-                echo 'Checking out code from GitHub...'
-                git branch: 'master', url: 'https://github.com/DOUHIelMehdi/todo-app.git'
-            }
-        }
+        // stage('Checkout Code') {
+        //     steps {
+        //         echo 'Checking out code from GitHub...'
+        //         git branch: 'master', url: 'https://github.com/DOUHIelMehdi/todo-app.git'
+        //     }
+        // }
 
         stage('Build') {
             steps {
