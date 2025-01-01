@@ -7,12 +7,12 @@ pipeline {
     }
 
     stages {
-        // stage('Checkout Code') {
-        //     steps {
-        //         echo 'Checking out code from GitHub...'
-        //         git branch: 'master', url: 'https://github.com/DOUHIelMehdi/todo-app.git'
-        //     }
-        // }
+        stage('Checkout Code') {
+            steps {
+                echo 'Checking out code from GitHub...'
+                git branch: 'master', url: 'https://github.com/DOUHIelMehdi/todo-app.git'
+            }
+        }
 
         stage('Build') {
             steps {
@@ -36,6 +36,43 @@ pipeline {
                 // sh 'docker build -t $IMAGE_TAG:$BUILD_NUMBER .'
 
                 echo 'Docker Image Built Successfully.'
+            }
+        }
+
+                stage('Scan-Docker-Image') {
+            steps {
+                script {
+                    // Install Docker Scout (if not already installed)
+                    sh '''
+                    if ! command -v docker-scout &> /dev/null; then
+                        echo "Installing Docker Scout..."
+                        curl -sSfL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh | sh -s -- -b /usr/local/bin
+                    fi
+                    '''
+
+                    // Login to DockerHub
+                    sh '''
+                    echo $DOCKER_HUB_PSW | docker login -u $DOCKER_HUB_USR --password-stdin
+                    '''
+
+                    // Scan Docker image for vulnerabilities
+                    echo 'Scanning Docker image for vulnerabilities...'
+                    sh '''
+                    docker-scout cves $IMAGE_TAG:$BUILD_NUMBER
+                    '''
+                    echo 'Scanning complete.'
+                }
+            }
+        }
+
+        stage('Push-Docker-Image') {
+            steps {
+                echo 'Pushing Docker Image to DockerHub...'
+
+                // Push Docker image to DockerHub
+                sh 'docker push $IMAGE_TAG:$BUILD_NUMBER'
+
+                echo 'Docker Image Pushed Successfully.'
             }
         }
         
